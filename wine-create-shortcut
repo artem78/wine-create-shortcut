@@ -48,8 +48,15 @@ $appName"\\n"Path=$myPath"\\n"Type=Application"\\n"Categories=Application;\
 $category;"\\n"Icon="$myFile.icon.png""
     # Create a .desktop file and add desktop entries in it.
     echo -e $deskEntry >"$myFile".desktop
+    # Check if shortcut already exists and ask for overwrite
+    shortcutFile="$HOME/.local/share/applications/$myBaseName.desktop"
+    if [ -f $shortcutFile ]; then
+        if ! zenity --question --text="Shortcut already exists. Overwrite?"; then
+            exit 1
+        fi
+    fi
     # link the launcher  file to a shortcut on applications menu.
-    ln -s "$myFile.desktop" "$HOME/.local/share/applications/$myBaseName.desktop"
+    ln -sf "$myFile.desktop" $shortcutFile
     # Test if the app link was created sucessfully on applications menu 
     if [ $? -eq 0 ]; then
     	echo "Shortcut created sucessfuly on applications menu."
